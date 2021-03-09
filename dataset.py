@@ -59,7 +59,7 @@ def get_spectogram_praat(path):
 
 
 def get_spectogram(path):
-    fig = plt.figure(figsize=(2.4,2.4), dpi=100)
+    fig = plt.figure(figsize=(2.24,2.24), dpi=100)
     sample_rate, samples = wavfile.read(path)
     frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
     plt.pcolormesh(times, frequencies, np.log(spectrogram), vmin=np.log(spectrogram).max() - 23, cmap='Greys_r')
@@ -68,7 +68,7 @@ def get_spectogram(path):
     fig.savefig('{}.png'.format(path))
     return "{}.png".format(path)
 
-#get_spectogram("dataset\healthy\Angela G\VE1AGNIGNEE54F230320171021.wav")
+get_spectogram("dataset/healthy/AGNESE P/VA1APGANRET55F170320171107.wav")
 
 
 
@@ -137,23 +137,23 @@ def create_df():
             features2 = []
             for vocal in ['A', 'E', 'I', 'O', 'U']:
                 sound_file1 = [filename for filename in list if filename.startswith("V{}1".format(vocal))][0]
-                current_feature1 = get_features("dataset/healthy/{}/{}".format(name, sound_file1))
-                features1 += current_feature1
+                #current_feature1 = get_features("dataset/healthy/{}/{}".format(name, sound_file1))
+                #features1 += current_feature1
 
-                #location1 = get_spectogram("dataset/healthy/{}/{}".format(name, sound_file1))
-                features1.append("dataset/healthy/{}/{}.png".format(name, sound_file1))
+                location1 = get_spectogram("dataset/healthy/{}/{}".format(name, sound_file1))
+                #features1.append("dataset/healthy/{}/{}.png".format(name, sound_file1))
 
                 sound_file2 = [filename for filename in list if filename.startswith("V{}2".format(vocal))][0]
-                current_feature2 = get_features("dataset/healthy/{}/{}".format(name, sound_file2))
-                features2 += current_feature2
+                #current_feature2 = get_features("dataset/healthy/{}/{}".format(name, sound_file2))
+                #features2 += current_feature2
 
-                #location2 = get_spectogram("dataset/healthy/{}/{}".format(name, sound_file2))
-                features2.append("dataset/healthy/{}/{}.png".format(name, sound_file2))
+                location2 = get_spectogram("dataset/healthy/{}/{}".format(name, sound_file2))
+                #features2.append("dataset/healthy/{}/{}.png".format(name, sound_file2))
 
-            features1 += (healthy[name][0], healthy[name][1], 0)
-            features2 += (healthy[name][0], healthy[name][1], 0)
+            #features1 += (healthy[name][0], healthy[name][1], 0)
+            #features2 += (healthy[name][0], healthy[name][1], 0)
 
-            csvwriter.writerows([features1, features2])
+            #csvwriter.writerows([features1, features2])
 
         for name in listdir("dataset/pd"):
             list = listdir("dataset/pd/{}".format(name))
@@ -162,23 +162,23 @@ def create_df():
             features2 = []
             for vocal in ['A', 'E', 'I', 'O', 'U']:
                 sound_file1 = [filename for filename in list if filename.startswith("V{}1".format(vocal))][0]
-                current_feature1 = get_features("dataset/pd/{}/{}".format(name, sound_file1))
-                features1 += current_feature1
+                #current_feature1 = get_features("dataset/pd/{}/{}".format(name, sound_file1))
+                #features1 += current_feature1
 
                 location1 = get_spectogram("dataset/pd/{}/{}".format(name, sound_file1))
-                features1.append(location1)
+                #features1.append(location1)
 
                 sound_file2 = [filename for filename in list if filename.startswith("V{}2".format(vocal))][0]
-                current_feature2 = get_features("dataset/pd/{}/{}".format(name, sound_file2))
-                features2 += current_feature2
+                #current_feature2 = get_features("dataset/pd/{}/{}".format(name, sound_file2))
+                #features2 += current_feature2
 
                 location2 = get_spectogram("dataset/pd/{}/{}".format(name, sound_file2))
-                features2.append(location2)
+                #features2.append(location2)
 
-            features1 += (pd[name][0], pd[name][1], 1)
-            features2 += (pd[name][0], pd[name][1], 1)
+            #features1 += (pd[name][0], pd[name][1], 1)
+            #features2 += (pd[name][0], pd[name][1], 1)
 
-            csvwriter.writerows([features1, features2])
+            #csvwriter.writerows([features1, features2])
 
         print("Dataset created")
 
