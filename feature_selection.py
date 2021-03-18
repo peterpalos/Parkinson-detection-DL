@@ -1,40 +1,45 @@
-from sklearn.svm import LinearSVC
-from sklearn.feature_selection import RFE
 import pandas as pd
 from sklearn.utils import shuffle
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import f_classif
+from sklearn.feature_selection import f_classif, chi2
 
-df = pd.read_csv("Dataset/sound_features.csv", header=None)
-df = df.values
-df = shuffle(df)
-x = df[:,0:-1]
-y = df[:,-1].astype(float)
+def feature_mask(type):
+    df = pd.read_csv("dataset/sound_features.csv", header=None)
+    df = df.values
+    x = df[:,0:-1]
+    y = df[:,-1].astype("float")
 
-step = 0
-p_vals =[]
-for vowel in ['A', 'E', 'I', 'O', 'U']:
-        train_data_x = x[:, step:step + 26]
-        scaler = StandardScaler()
-        sc_train_data_x = scaler.fit_transform(x[:,step:step+26])
-        step += 27
+    step = 0
+    masks = {}
+    for vowel in ['A', 'E', 'I', 'O', 'U']:
+            train_data_x = x[:, step:step + 26+39]
+            step += 27+39
 
-        '''svm = LinearSVC()
-        rfe = RFE(svm, n_features_to_select=0.6)
-        rfe = rfe.fit(train_data_x, y)
-        print(rfe.ranking_)'''
+            if type == "ANOVA":
+                f_score, p_value = f_classif(train_data_x, y)
+            elif type == "chi":
+                f_score, p_value = chi2(train_data_x, y)
+            mask = p_value <= 0.1
+            masks[vowel] = mask
 
-        f_score, f_p_value = f_classif(train_data_x, y)
-        p_vals.append(f_p_value)
+    return masks
 
-
-(p_vals[0]<=0.05) | (p_vals[1]<=0.05)| (p_vals[2]<=0.05)| (p_vals[3]<=0.05)| (p_vals[4]<=0.05)
-
-(p_vals[0]>0.05) & (p_vals[1]>0.05)& (p_vals[2]>0.05)& (p_vals[3]>0.05)& (p_vals[4]>0.05)
+mask_cc = feature_mask(type="ANOVA")
 
 
-def feature_mask():
-    mask = [False, False,  True, False,  True, False, False, False,  True,
-            True,  True,  True,  True,  True,  True,  True,  True,  True,
-            True,  True,  True,  True,  True,  True,  True,  True]
-    return mask
+def summed_feature_mask():
+    df = pd.read_csv("dataset/sound_features.csv", header=None)
+    df = df.values
+    x = df[:, 0:-1]
+    y = df[:, -1].astype("float")
+
+    p_vals =[]
+    step = 0
+    for _ in ['A', 'E', 'I', 'O', 'U']:
+            train_data_x = x[:, step:step + 26]
+            step += 27
+
+            f_score, f_p_value = f_classif(train_data_x, y)
+            p_vals.append(f_p_value)
+
+    masks = (p_vals[0]<=0.05) | (p_vals[1]<=0.05)| (p_vals[2]<=0.05)| (p_vals[3]<=0.05)| (p_vals[4]<=0.05)
+    return masks

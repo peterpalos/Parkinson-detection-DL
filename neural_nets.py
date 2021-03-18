@@ -1,3 +1,5 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 from tensorflow.keras.models import Model
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.layers import concatenate
@@ -13,8 +15,8 @@ from tensorflow.keras.layers import Dropout
 
 #from tensorflow.keras.utils import plot_model
 
-def create_mlp():
-    input = Input(shape=(20,))
+def create_mlp(dim):
+    input = Input(shape=(dim,))
     x = Dense(64, activation='relu')(input)
     x = Dropout(0.3)(x)
     x = Dense(128, activation='relu')(x)
@@ -49,17 +51,13 @@ def create_CNN_LSTM():
     return model
 
 
-def create_mixed_model(resnet=True):
-    mlp = create_mlp()
-    if resnet:
-        resnet = create_resnet()
-        combined_model = concatenate([mlp.output, resnet.output])
-    else:
-        cnn_lstm =create_CNN_LSTM()
-        combined_model = concatenate([mlp.output, cnn_lstm.output])
+def create_mixed_model(dim):
+    mlp = create_mlp(dim)
+    resnet = create_resnet()
+    combined_model = concatenate([mlp.output, resnet.output])
 
-    x = Dense(64, activation="relu")(combined_model)
-    x = Dense(248, activation="relu")(x)
+    x = Dense(128, activation="relu")(combined_model)
+    x = Dense(256, activation="relu")(x)
     x = Dense(1, activation="sigmoid")(x)
 
 
