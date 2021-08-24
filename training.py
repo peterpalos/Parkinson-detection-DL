@@ -121,10 +121,3 @@ MCC =  safe_div((TP * TN) - (FP * FN), math.sqrt((TP + FP) * (TP + FN) * (TN + F
 
 print("____ALL SUBSETS TRAINED____")
 print("accuracy: {}, sensitivity: {}, specificity: {}, MCC: {}".format(accuracy, sensitivity, specificity, MCC))
-
-
-# ssh palos@192.168.50.87
-# tensorboard --logdir=tensorboard --host localhost --port 8088
-
-
-#6-2
